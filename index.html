@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTTP Video Streaming</title>
+    <style>
+        body {
+            margin: 40px auto;
+            max-width: 650px;
+            background-color: #444;
+        }
+    </style>
+</head>
+<body>
+    <video id="videoPlayer" width="650" controls muted="muted" autoplay>
+        <source src="" type="video/mp4" id="videoSource" />
+    </video>
+
+    <button onclick="changeQuality('360p')">360p</button>
+    <button onclick="changeQuality('540p')">540p</button>
+    <button onclick="changeQuality('720p')">720p</button>
+
+    <script>
+        function changeQuality(quality) {
+            const video = document.getElementById('videoSource');
+            video.src = `/${quality}`;
+            video.parentElement.load();
+        }
+    </script>
+</body>
+</html>

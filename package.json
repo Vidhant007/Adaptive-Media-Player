@@ -1,0 +1,15 @@
+{
+  "name": "videostreaming",
+  "version": "1.0.0",
+  "description": "videostreaming-backend ",
+  "main": "app.js",
+  "scripts": {
+    "test": "npm start"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2",
+    "nodemon": "^3.0.1"
+  }
+}
