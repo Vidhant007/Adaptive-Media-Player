@@ -1,21 +1,24 @@
 const express = require('express');
 const app = express();
 const fs = require('fs');
+const path = require('path');
+
+const videoDir = path.join(__dirname, 'video1'); // Set the video directory path
 
 app.get('/', function (req, res) {
   res.sendFile(__dirname + '/index.html');
 });
 
 app.get('/360p', function (req, res) {
-  streamVideo('output_360p_av1.mp4', req,res);
+  streamVideo(path.join(videoDir, 'output_360p_av1.mp4'), req, res);
 });
 
 app.get('/540p', function (req, res) {
-  streamVideo('output_540p_av1.mp4',req, res);
+  streamVideo(path.join(videoDir, 'output_540p_av1.mp4'), req, res);
 });
 
 app.get('/720p', function (req, res) {
-  streamVideo('output_720p_av1.mp4',req, res);
+  streamVideo(path.join(videoDir, 'output_720p_av1.mp4'), req, res);
 });
 
 function streamVideo(videoFileName, req,res) {
