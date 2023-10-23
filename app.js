@@ -3,7 +3,7 @@ const app = express();
 const fs = require('fs');
 const path = require('path');
 
-const videoDir = path.join(__dirname, 'video1'); // Set the video directory path
+const videoDir = path.join(__dirname, 'video2'); // Set the video directory path
 
 app.get('/', function (req, res) {
   res.sendFile(__dirname + '/index.html');
