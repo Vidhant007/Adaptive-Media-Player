@@ -3,6 +3,13 @@ const app = express();
 const fs = require('fs');
 const path = require('path');
 
+
+// ROUTERS
+const {USERROUTER} = require('./routes/userRoute');
+const {SUBSCRIPTIONSROUTER} = require('./routes/subscriptionRoute');
+const {PROFILESROUTER} = require('./routes/profileRouter');
+
+
 const videoDir = path.join(__dirname, 'video2'); // Set the video directory path
 
 app.get('/', function (req, res) {
@@ -56,6 +63,11 @@ function streamVideo(videoFileName, req,res) {
   //stream the video chunk to client
   videoStream.pipe(res);
 }
+
+//ROUTES
+app.use('/api/v1/auth',USERROUTER);
+app.use('/api/v1/profile',PROFILESROUTER);
+app.use('/api/v1/subscription',SUBSCRIPTIONSROUTER);
 
 app.listen(8000, function () {
   console.log('Listening on port 8000!');
