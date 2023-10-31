@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const express = require('express');
 const app = express();
 const fs = require('fs');
@@ -8,6 +10,7 @@ const path = require('path');
 const {USERROUTER} = require('./routes/userRoute');
 const {SUBSCRIPTIONSROUTER} = require('./routes/subscriptionRoute');
 const {PROFILESROUTER} = require('./routes/profileRouter');
+const { CONNECTDATABSE } = require('./db/connect');
 
 
 const videoDir = path.join(__dirname, 'video2'); // Set the video directory path
@@ -69,6 +72,22 @@ app.use('/api/v1/auth',USERROUTER);
 app.use('/api/v1/profile',PROFILESROUTER);
 app.use('/api/v1/subscription',SUBSCRIPTIONSROUTER);
 
-app.listen(8000, function () {
-  console.log('Listening on port 8000!');
-});
+
+const PORT = process.env.PORT ;
+
+const start = async()=>{
+  try{
+    
+    CONNECTDATABSE();
+    app.listen(PORT,()=>{
+      console.log(`Server is running on port ${PORT}`);
+    })
+
+  }catch(error){
+    console.log(error);
+  }
+}
+
+start();
+
+

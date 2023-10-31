@@ -12,3 +12,4 @@ SUBSCRIPTIONS.patch('/unsubscribe-plan',UNSUBSCRIBEPLAN); //turns the plan to in
 module.exports = {
     SUBSCRIPTIONSROUTER : SUBSCRIPTIONS
 }
+
