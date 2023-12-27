@@ -4,7 +4,8 @@ const multer = require('multer');
 const {StatusCodes} = require('http-status-codes');
 
 const MOVIE = require('../models/movieModel');
-const { STATUS_CODES } = require('http');
+const {RUNTRANSCODINGSCRIPT} = require('../transcoder/transcoder');
+
 
 // storage
 const Storage = multer.diskStorage({
@@ -55,6 +56,11 @@ const addMovie = async (req, res) => {
 
         try {
             await newMovie.save();
+
+            if(videoPath){
+                await RUNTRANSCODINGSCRIPT(videoPath, 'transcoded_videos');
+                console.log('trancoding completed successfully')
+            }
             res.status(StatusCodes.CREATED).json('Successfully uploaded');
         } catch (err) {
             console.log(err);
