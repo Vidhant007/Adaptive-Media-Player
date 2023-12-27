@@ -1,5 +1,13 @@
+const User = require('../models/userModel');
+const {StatusCodes} = require('http-status-codes');
+
+
 const registerUser = async (req,res)=>{
-    res.send('Register User');
+    const {username,phone,email,password} = req.body;
+    const tempUser = {username,phone,password,email};
+    const user = await User.create({...tempUser});
+    res.status(StatusCodes.CREATED).send({user});
+
 }
 
 const loginUser = async(req,res)=>{

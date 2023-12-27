@@ -5,11 +5,18 @@ const app = express();
 const fs = require('fs');
 const path = require('path');
 
+app.use(express.json());
+app.use(express.static("./public/uploads"));
 
 // ROUTERS
 const {USERROUTER} = require('./routes/userRoute');
 const {SUBSCRIPTIONSROUTER} = require('./routes/subscriptionRoute');
 const {PROFILESROUTER} = require('./routes/profileRouter');
+const {MOVIESROUTER} = require('./routes/moviesRouter');
+
+//IMPORT VIDEOPLAYER
+const {VIDEO_360p,VIDEO_540p,VIDEO_720p} = require('./player/videoPlayer');
+
 const { CONNECTDATABSE } = require('./db/connect');
 
 
@@ -19,17 +26,17 @@ app.get('/', function (req, res) {
   res.sendFile(__dirname + '/index.html');
 });
 
-app.get('/360p', function (req, res) {
-  streamVideo(path.join(videoDir, 'output_360p_av1.mp4'), req, res);
-});
+app.get('/360p',VIDEO_360p);
+app.get('/540p',VIDEO_540p);
+app.get('/720p',VIDEO_720p);
 
-app.get('/540p', function (req, res) {
-  streamVideo(path.join(videoDir, 'output_540p_av1.mp4'), req, res);
-});
+// app.get('/540p', function (req, res) {
+//   streamVideo(path.join(videoDir, 'output_540p_av1.mp4'), req, res);
+// });
 
-app.get('/720p', function (req, res) {
-  streamVideo(path.join(videoDir, 'output_720p_av1.mp4'), req, res);
-});
+// app.get('/720p', function (req, res) {
+//   streamVideo(path.join(videoDir, 'output_720p_av1.mp4'), req, res);
+// });
 
 function streamVideo(videoFileName, req,res) {
  
@@ -71,6 +78,7 @@ function streamVideo(videoFileName, req,res) {
 app.use('/api/v1/auth',USERROUTER);
 app.use('/api/v1/profile',PROFILESROUTER);
 app.use('/api/v1/subscription',SUBSCRIPTIONSROUTER);
+app.use('/api/v1/movies',MOVIESROUTER);
 
 
 const PORT = process.env.PORT ;

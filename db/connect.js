@@ -9,7 +9,7 @@ const connectDatabase = async () => {
     DATABASE_URL = process.env.DATABASE_URL;
     DATABASE_USERNAME = process.env.DATABASE_USERNAME;
     DATABASE_PASSWORD = process.env.DATABASE_PASSWORD;
-    DATABASE_STRING = `mongodb+srv://${DATABASE_USERNAME}:${DATABASE_PASSWORD}@${DATABASE_URL}/?retryWrites=true&w=majority`;
+    DATABASE_STRING = `mongodb+srv://${DATABASE_USERNAME}:${DATABASE_PASSWORD}@${DATABASE_URL}/AdaptiveVideoPlayer?retryWrites=true&w=majority`;
     await mongoose
       .connect(DATABASE_STRING, {
         useNewUrlParser: true,
