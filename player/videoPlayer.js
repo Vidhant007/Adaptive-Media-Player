@@ -2,18 +2,21 @@ const path = require('path');
 const fs = require('fs');
 
 // experimemntal find a way to send it dynamically
-const videoDir = path.resolve(__dirname, '..', 'video2'); // Go up one directory and then into 'video2'
+const videoDir = path.resolve(__dirname, '..', 'videos'); // Go up one directory and then into 'video2'
 
 
 const video_360p = async(req,res) =>{
+  const {videoDir} = req.body;
   streamVideo(path.join(videoDir, 'output_360p_av1.mp4'), req, res);
 }
 
 const video_540p = async(req,res) =>{
+  const {videoDir} = req.body;
   streamVideo(path.join(videoDir, 'output_540p_av1.mp4'), req, res);
 }
 
 const video_720p = async(req,res) =>{
+  const {videoDir} = req.body;
   streamVideo(path.join(videoDir, 'output_720p_av1.mp4'), req, res);
 }
 
