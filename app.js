@@ -29,7 +29,6 @@ const { PLAYER } = require('./player/playerRouter');
 app.use('/player',PLAYER);
 
 
-
 //ROUTES
 app.use('/api/v1/auth',USERROUTER);
 app.use('/api/v1/profile',PROFILESROUTER);

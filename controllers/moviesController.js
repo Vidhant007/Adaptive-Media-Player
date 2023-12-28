@@ -25,7 +25,7 @@ const upload = multer({
 
 //get all movies
 const getMovies = async(req,res)=>{
-    const movies = await MOVIE.find({title: 'HollowKnight'});
+    const movies = await MOVIE.find();
     res.status(StatusCodes.OK).json(movies);
 }
 
@@ -91,12 +91,69 @@ const getMovieDetails = async(req,res)=>{
     res.send("Get Movies Details");
 };
 
+
 const editMovieDetails = async(req,res)=>{
-    res.send("Edit Movies Details");
+    try{
+        const {id} = req.params;
+        if(!id){
+            return res.status(StatusCodes.FORBIDDEN).send('Movie ID not Defined');
+        }
+
+        //check if movie exists
+        const movie = await MOVIE.findById(id);
+
+        if(!movie){
+            return res.status(StatusCodes.NOT_FOUND).send('Movie not found');
+        }
+
+        // check if user is authorized
+    
+
+        const updated = await MOVIE.findOneAndUpdate({_id: id},req.body);
+
+        //send response
+        if(updated){
+            return res.status(StatusCodes.OK).send(`Movie Updated: ${updated}`);
+        } else {
+            return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send('Error Updating Movie');
+        }
+    }catch (error){
+        console.log(error);
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send('Error Updated Movie');
+    }
 };
 
+
+
 const removeMovie = async(req,res)=>{
-    res.send("Remove Movie");
+    try{
+        const {id} = req.params;
+        if(!id){
+            return res.status(StatusCodes.FORBIDDEN).send('Movie ID not Defined');
+        }
+
+        //check if movie exists
+        const movie = await MOVIE.findById(id);
+
+        if(!movie){
+            return res.status(StatusCodes.NOT_FOUND).send('Movie not found');
+        }
+
+        // check if user is authorized
+    
+
+        const deleted = await MOVIE.findOneAndDelete({_id: id});
+
+        //send response
+        if(deleted){
+            return res.status(StatusCodes.OK).send(`Movie Deleted: ${deleted}`);
+        } else {
+            return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send('Error Deleting Movie');
+        }
+    }catch (error){
+        console.log(error);
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send('Error Deleting Movie');
+    }
 };
 
 
