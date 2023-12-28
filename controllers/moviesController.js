@@ -1,5 +1,6 @@
 const path = require('path');
 const fs = require('fs'); 
+const fs_promise = require('fs').promises; 
 const multer = require('multer');
 const {StatusCodes} = require('http-status-codes');
 
@@ -139,9 +140,12 @@ const removeMovie = async(req,res)=>{
             return res.status(StatusCodes.NOT_FOUND).send('Movie not found');
         }
 
-        // check if user is authorized
+        // First Delete all transcoded movies
+        const rootDir = path.resolve(__dirname, '..');
+        const transcodedDataDir = path.join(rootDir,movie.videoPath);
+        await fs_promise.rm(transcodedDataDir,{recursive: true});
     
-
+        // delete data in db
         const deleted = await MOVIE.findOneAndDelete({_id: id});
 
         //send response
