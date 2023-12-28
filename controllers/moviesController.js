@@ -25,7 +25,7 @@ const upload = multer({
 
 //get all movies
 const getMovies = async(req,res)=>{
-    const movies = await MOVIE.find({title: 'CupHead'});
+    const movies = await MOVIE.find({title: 'HollowKnight'});
     res.status(StatusCodes.OK).json(movies);
 }
 

@@ -4,6 +4,9 @@ const express = require('express');
 const app = express();
 const fs = require('fs');
 const path = require('path');
+const cors = require('cors');
+
+app.use(cors());
 
 app.use(express.json());
 app.use(express.static("./public/uploads"));
@@ -18,13 +21,12 @@ const {MOVIESROUTER} = require('./routes/moviesRouter');
 const {VIDEO_360p,VIDEO_540p,VIDEO_720p} = require('./player/videoPlayer');
 
 const { CONNECTDATABSE } = require('./db/connect');
+const { PLAYER } = require('./player/playerRouter');
 
 
 
-app.post('/360p',VIDEO_360p);
-app.post('/540p',VIDEO_540p);
-app.post('/720p',VIDEO_720p);
-
+// VIDEO PLAYER
+app.use('/player',PLAYER);
 
 
 

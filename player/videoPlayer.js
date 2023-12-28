@@ -2,28 +2,34 @@ const path = require('path');
 const fs = require('fs');
 
 // experimemntal find a way to send it dynamically
-const videoDir = path.resolve(__dirname, '..', 'videos'); // Go up one directory and then into 'video2'
+const rootDir = path.resolve(__dirname, '..'); // Go up one directory and then into 'video2'
 
 
 const video_360p = async(req,res) =>{
-  const {videoDir} = req.body;
+  const {videoPath} = req.query;
+  const videoDir = path.join(rootDir,videoPath);
   streamVideo(path.join(videoDir, 'output_360p_av1.mp4'), req, res);
 }
 
 const video_540p = async(req,res) =>{
-  const {videoDir} = req.body;
+  const {videoPath} = req.query;
+  const videoDir = path.join(rootDir,videoPath);
   streamVideo(path.join(videoDir, 'output_540p_av1.mp4'), req, res);
 }
 
 const video_720p = async(req,res) =>{
-  const {videoDir} = req.body;
+  const {videoPath} = req.query;
+  const videoDir = path.join(rootDir,videoPath);
   streamVideo(path.join(videoDir, 'output_720p_av1.mp4'), req, res);
 }
 
+
+// Function that actually Streams Video
 function streamVideo(videoFileName, req,res) {
  
     // Ensuring there is range given for video
-     const range = req.headers.range;const videoDir = path.join(__dirname, 'video2'); // Set the video directory path
+     const range = req.headers.range;
+     const videoDir = path.join(__dirname, 'video2'); // Set the video directory path
 
      if(!range){
        res.status(400).send("Requires Range header");
