@@ -26,5 +26,3 @@ sudo make install
 ```
 ffmpeg -version
 ```
-
-

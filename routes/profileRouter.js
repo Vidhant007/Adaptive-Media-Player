@@ -3,6 +3,8 @@ const PROFILE = express.Router();
 
 const {GETPROFILES,GETUSERPROFILE,DELETEUSERPROFILE,UPDATEUSERPROFILE,CREATEUSERPROFILE} = require('../controllers/profilesController');
 
+
+PROFILE.post('/create-profile',CREATEUSERPROFILE);
 PROFILE.get('/get-profiles',GETPROFILES);
 PROFILE.get('/get-user-profile',GETUSERPROFILE);
 PROFILE.patch('/update-profile',UPDATEUSERPROFILE);
