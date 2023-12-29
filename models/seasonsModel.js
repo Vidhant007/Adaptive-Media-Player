@@ -24,4 +24,4 @@ const seasonsSchema = new mongoose.Schema({
 
 
 
-module.exports = mongoose.model('Seasons', seasonsSchema);
+module.exports = mongoose.model('Season', seasonsSchema);
