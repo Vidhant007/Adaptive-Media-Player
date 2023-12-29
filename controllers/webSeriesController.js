@@ -84,7 +84,60 @@ const addSeason = async(req,res)=>{
 }
 
 const addEpisode = async(req,res)=>{
-    res.send('Add episodes');
+    upload(req, res, async (err) => {
+        if (err) {
+            console.log(err);
+            return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: 'Error uploading files' });
+        }
+
+        const images = req.files.images.map((file) => {
+            return {
+                data: file.filename,
+                contentType: file.mimetype,
+            };
+        });
+
+        const videoPath = req.files.video ? path.join('uploads', req.files.video[0].filename) : null;
+
+        const newEpisode = new EPISODE({
+            seriesTitle: req.body.seriesTitle,
+            seasonNumber: req.body.seasonNumber,
+            episodeNumber: req.body.episodeNumber,
+            description: req.body.description,
+            images: images,
+            videoPath: videoPath,
+        });
+        
+        const seriesTitle = newEpisode.seriesTitle.replace(/\s+/g, '_');
+        const seasonName = "Season" + newEpisode.seasonNumber.toString();
+        const episodeName = "Episode" + newEpisode.episodeNumber.toString();
+        const outputDir = path.join('series',seriesTitle,seasonName,episodeName);
+        console.log(outputDir);
+        
+        // Check if the directory exists; create it if not
+        if (!fs.existsSync(outputDir)) {
+            fs.mkdirSync(outputDir, { recursive: true });
+        }
+
+        try {
+            await newEpisode.save();
+
+            if(videoPath){
+                await RUNTRANSCODINGSCRIPT(videoPath, outputDir);
+
+                // Update the videoPath in db with trancoded video path
+                newEpisode.videoPath = outputDir;
+                await newEpisode.save();
+
+                console.log('trancoding completed successfully')
+
+            }
+            res.status(StatusCodes.CREATED).json('Successfully uploaded');
+        } catch (err) {
+            console.log(err);
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: 'Error saving movie details' });
+        }
+    });
 }
 
 //getting series data
