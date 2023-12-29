@@ -30,10 +30,41 @@ const upload = multer({
 // ==========CONTROLLERS==========================================================
 
 // creating Series
-const addSeries = async(req,res)=>{
+const addSeries = async (req, res) => {
+    upload(req, res, async (err) => {
+      if (err) {
+        console.log(err);
+        return res
+          .status(StatusCodes.INTERNAL_SERVER_ERROR)
+          .json({ error: 'Error uploading files' });
+      }
+  
+      const images = req.files.images.map((file) => {
+        return {
+          data: file.filename,
+          contentType: file.mimetype,
+        };
+      });
+  
+      const newSeries = new SERIES({
+        title: req.body.title,
+        description: req.body.description,
+        genre: req.body.genre,
+        rating: req.body.rating,
+        images: images,
+      });
 
-    const series = await Series.create(req.body);
-    res.send({series});
+
+        try{
+            await newSeries.save();
+            res.status(StatusCodes.CREATED).json(`Series Created: ${newSeries}`);
+        }catch(error){
+            console.log(error);
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: 'Error saving movie details' });
+        }
+
+    });
+
 }
 
 const addSeason = async(req,res)=>{

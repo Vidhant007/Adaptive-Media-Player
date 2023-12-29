@@ -24,11 +24,12 @@ const seriesSchema = new mongoose.Schema({
         min: 0, 
         max: 10, 
     },
-    imageUrls: {
-        type: [String],
-        required: true,
-        minlength: 1,
-    },
+    images: [
+        {
+            data: Buffer, //storing images in mongodb
+            contentType: String,
+        }
+    ],
     releaseDate:{
         type: Date,
         default: Date.now,
