@@ -21,20 +21,18 @@ const seriesSchema = new mongoose.Schema({
     rating: {
         type: Number,
         required: [true, "Please provide a rating"],
-        min: 0, // Adjusted minimum value
-        max: 10, // Adjusted maximum value
+        min: 0, 
+        max: 10, 
     },
     imageUrls: {
         type: [String],
         required: true,
         minlength: 1,
     },
-    videoPath: {
-        type: String,
-    },
     releaseDate:{
         type: Date,
-    }
+        default: Date.now,
+    },
 });
 
 
