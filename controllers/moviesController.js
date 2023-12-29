@@ -57,7 +57,7 @@ const addMovie = async (req, res) => {
         });
         
         const movieName = newMovie.title.replace(/\s+/g, '_');
-        const outputDir = path.join('videos', movieName);
+        const outputDir = path.join('movies', movieName);
         
         // Check if the directory exists; create it if not
         if (!fs.existsSync(outputDir)) {

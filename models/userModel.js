@@ -1,8 +1,5 @@
 const mongoose = require("mongoose");
 const userSchema = new mongoose.Schema({
-  userid:{
-    type: String,
-    },
   username: {
     type: String,
     required: [true, "Please provide a username"],
@@ -33,7 +30,7 @@ const userSchema = new mongoose.Schema({
     maxlength: 50, // Corrected property name
   },
   profiles:{
-
+    
   },
   subscriptionId:{
 

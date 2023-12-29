@@ -1,28 +1,20 @@
 const mongoose = require('mongoose');
 
 const episodeSchema = new mongoose.Schema({
-    title: {
+    seriesTitle: {
         type: String,
         required: [true, "Please provide a title"],
         maxlength: 50,
+    },
+    seasonNumber:{  // helps specify which series episode belongs to
+        type: Number,
+        required: [true, "Please provide a season number"],
     },
     description: {
         type: String,
         required: [true, "Please provide a description"],
         minlength: 3,
         maxlength: 500, // Adjusted max length
-    },
-    genre: {
-        type: String,
-        required: [true, "Please provide a genre"],
-        minlength: 3,
-        maxlength: 50,
-    },
-    rating: {
-        type: Number,
-        required: [true, "Please provide a rating"],
-        min: 0, // Adjusted minimum value
-        max: 10, // Adjusted maximum value
     },
     imageUrls: {
         type: [String],

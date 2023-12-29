@@ -16,12 +16,12 @@ const {USERROUTER} = require('./routes/userRoute');
 const {SUBSCRIPTIONSROUTER} = require('./routes/subscriptionRoute');
 const {PROFILESROUTER} = require('./routes/profileRouter');
 const {MOVIESROUTER} = require('./routes/moviesRouter');
+const { SERIESROUTER } = require('./routes/seriesRouter');
+const { PLAYER } = require('./player/playerRouter');
 
-//IMPORT VIDEOPLAYER
-const {VIDEO_360p,VIDEO_540p,VIDEO_720p} = require('./player/videoPlayer');
+
 
 const { CONNECTDATABSE } = require('./db/connect');
-const { PLAYER } = require('./player/playerRouter');
 
 
 
@@ -34,6 +34,7 @@ app.use('/api/v1/auth',USERROUTER);
 app.use('/api/v1/profile',PROFILESROUTER);
 app.use('/api/v1/subscription',SUBSCRIPTIONSROUTER);
 app.use('/api/v1/movies',MOVIESROUTER);
+app.use('/api/v1/series',SERIESROUTER)
 
 
 const PORT = process.env.PORT ;
