@@ -60,7 +60,7 @@ const addSeries = async (req, res) => {
             res.status(StatusCodes.CREATED).json(`Series Created: ${newSeries}`);
         }catch(error){
             console.log(error);
-            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: 'Error saving movie details' });
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: 'Error saving series details' });
         }
 
     });
@@ -68,8 +68,19 @@ const addSeries = async (req, res) => {
 }
 
 const addSeason = async(req,res)=>{
-    const season = await Season.create(req.body);
-    res.send({season});
+    try{
+        const {seriesTitle,seasonNumber,description,releaseDate} = req.body; 
+        const finaldata = {seriesTitle:seriesTitle,
+                            seasonNumber:seasonNumber,
+                            description:description,
+                            releaseDate:releaseDate};
+
+        const season = await SEASON.create(finaldata);
+        res.status(StatusCodes.CREATED).send({season});
+    } catch(error){
+        console.log(error);
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: 'Error saving season' });
+    }
 }
 
 const addEpisode = async(req,res)=>{
