@@ -186,13 +186,16 @@ const updateSeries = async(req,res)=>{
 
 const updateSeason = async(req,res)=>{
     try{
-        const {id} = req.params;
-        if(!id){
-            return res.status(StatusCodes.FORBIDDEN).send('Season ID not Defined');
-        }
+        const {seriesTitle,seasonNumber} = req.params;
 
+        if (!seriesTitle || !seasonNumber) {
+            return res.status(StatusCodes.FORBIDDEN).send('Series title and season numbere number must be defined in the URL parameters');
+        }
         //check if season exists
-        const season = await SEASON.findById(id);
+        const season = await SEASON.findOne({
+            seriesTitle: seriesTitle,
+            seasonNumber: seasonNumber,
+        });
 
         if(!season){
             return res.status(StatusCodes.NOT_FOUND).send('Season not found');
@@ -201,7 +204,10 @@ const updateSeason = async(req,res)=>{
         // check if user is authorized
     
 
-        const updated = await SEASON.findOneAndUpdate({_id: id},req.body,{new:true});
+        const updated = await SEASON.findOneAndUpdate({
+            seriesTitle: seriesTitle,
+            seasonNumber: seasonNumber,
+        },req.body,{new:true});
 
         //send response
         if(updated){
@@ -213,6 +219,7 @@ const updateSeason = async(req,res)=>{
         console.log(error);
         return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send('Error Updated Season');
     }};
+
 
 const updateEpisode = async(req,res)=>{
     try{
