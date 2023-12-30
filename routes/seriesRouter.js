@@ -20,7 +20,7 @@ SERIES.delete('/deleteSeason/:id',REMOVESEASON);
 
 SERIES.patch('/updateSeries/:id',UPDATESERIES);
 SERIES.patch('/updateSeason/:id',UPDATESEASON);
-SERIES.patch('/updateEpisode/:id',UPDATEEPISODE);
+SERIES.patch('/updateEpisode/:seriesTitle/:seasonNumber/:episodeNumber',UPDATEEPISODE);
 
 module.exports = {
     SERIESROUTER: SERIES

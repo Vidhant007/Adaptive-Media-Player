@@ -171,7 +171,7 @@ const updateSeries = async(req,res)=>{
         // check if user is authorized
     
 
-        const updated = await SERIES.findOneAndUpdate({_id: id},req.body);
+        const updated = await SERIES.findOneAndUpdate({_id: id},req.body,{new:true});
 
         //send response
         if(updated){
@@ -201,7 +201,7 @@ const updateSeason = async(req,res)=>{
         // check if user is authorized
     
 
-        const updated = await SEASON.findOneAndUpdate({_id: id},req.body);
+        const updated = await SEASON.findOneAndUpdate({_id: id},req.body,{new:true});
 
         //send response
         if(updated){
@@ -216,13 +216,18 @@ const updateSeason = async(req,res)=>{
 
 const updateEpisode = async(req,res)=>{
     try{
-        const {id} = req.params;
-        if(!id){
-            return res.status(StatusCodes.FORBIDDEN).send('Episode ID not Defined');
+        const {seriesTitle,seasonNumber,episodeNumber} = req.params;
+       
+        if (!seriesTitle || !seasonNumber || !episodeNumber) {
+            return res.status(StatusCodes.FORBIDDEN).send('Series title, season number, and episode number must be defined in the URL parameters');
         }
 
         //check if season exists
-        const episode = await EPISODE.findById(id);
+        const episode = await EPISODE.findOne({
+            seriesTitle: seriesTitle,
+            seasonNumber: seasonNumber,
+            episodeNumber: episodeNumber
+        });
 
         if(!episode){
             return res.status(StatusCodes.NOT_FOUND).send('episode not found');
@@ -231,7 +236,16 @@ const updateEpisode = async(req,res)=>{
         // check if user is authorized
     
 
-        const updated = await EPISODE.findOneAndUpdate({_id: id},req.body);
+        const updated = await EPISODE.findOneAndUpdate(
+            {
+                seriesTitle: seriesTitle,
+                seasonNumber: seasonNumber,
+                episodeNumber: episodeNumber
+            },
+            req.body,
+            { new: true } // Return the updated document
+        );
+
 
         //send response
         if(updated){
