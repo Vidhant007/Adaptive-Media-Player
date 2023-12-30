@@ -110,7 +110,7 @@ const editMovieDetails = async(req,res)=>{
         // check if user is authorized
     
 
-        const updated = await MOVIE.findOneAndUpdate({_id: id},req.body);
+        const updated = await MOVIE.findOneAndUpdate({_id: id},req.body,{new:true});
 
         //send response
         if(updated){

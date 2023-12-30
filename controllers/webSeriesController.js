@@ -84,7 +84,60 @@ const addSeason = async(req,res)=>{
 }
 
 const addEpisode = async(req,res)=>{
-    res.send('Add episodes');
+    upload(req, res, async (err) => {
+        if (err) {
+            console.log(err);
+            return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: 'Error uploading files' });
+        }
+
+        const images = req.files.images.map((file) => {
+            return {
+                data: file.filename,
+                contentType: file.mimetype,
+            };
+        });
+
+        const videoPath = req.files.video ? path.join('uploads', req.files.video[0].filename) : null;
+
+        const newEpisode = new EPISODE({
+            seriesTitle: req.body.seriesTitle,
+            seasonNumber: req.body.seasonNumber,
+            episodeNumber: req.body.episodeNumber,
+            description: req.body.description,
+            images: images,
+            videoPath: videoPath,
+        });
+        
+        const seriesTitle = newEpisode.seriesTitle.replace(/\s+/g, '_');
+        const seasonName = "Season" + newEpisode.seasonNumber.toString();
+        const episodeName = "Episode" + newEpisode.episodeNumber.toString();
+        const outputDir = path.join('series',seriesTitle,seasonName,episodeName);
+        console.log(outputDir);
+        
+        // Check if the directory exists; create it if not
+        if (!fs.existsSync(outputDir)) {
+            fs.mkdirSync(outputDir, { recursive: true });
+        }
+
+        try {
+            await newEpisode.save();
+
+            if(videoPath){
+                await RUNTRANSCODINGSCRIPT(videoPath, outputDir);
+
+                // Update the videoPath in db with trancoded video path
+                newEpisode.videoPath = outputDir;
+                await newEpisode.save();
+
+                console.log('trancoding completed successfully')
+
+            }
+            res.status(StatusCodes.CREATED).json('Successfully uploaded');
+        } catch (err) {
+            console.log(err);
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: 'Error saving movie details' });
+        }
+    });
 }
 
 //getting series data
@@ -102,16 +155,115 @@ const getEpisodes = async(req,res)=>{
 
 // Update Series Data
 const updateSeries = async(req,res)=>{
-    res.send('Update Series');
-};
+    try{
+        const {id} = req.params;
+        if(!id){
+            return res.status(StatusCodes.FORBIDDEN).send('Series ID not Defined');
+        }
+
+        //check if series exists
+        const series = await SERIES.findById(id);
+
+        if(!series){
+            return res.status(StatusCodes.NOT_FOUND).send('Series not found');
+        }
+
+        // check if user is authorized
+    
+
+        const updated = await SERIES.findOneAndUpdate({_id: id},req.body,{new:true});
+
+        //send response
+        if(updated){
+            return res.status(StatusCodes.OK).send(`Series Updated: ${updated}`);
+        } else {
+            return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send('Error Updating Series');
+        }
+    }catch (error){
+        console.log(error);
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send('Error Updated Series');
+    }};
 
 const updateSeason = async(req,res)=>{
-    res.send('Update Series');
-};
+    try{
+        const {seriesTitle,seasonNumber} = req.params;
+
+        if (!seriesTitle || !seasonNumber) {
+            return res.status(StatusCodes.FORBIDDEN).send('Series title and season numbere number must be defined in the URL parameters');
+        }
+        //check if season exists
+        const season = await SEASON.findOne({
+            seriesTitle: seriesTitle,
+            seasonNumber: seasonNumber,
+        });
+
+        if(!season){
+            return res.status(StatusCodes.NOT_FOUND).send('Season not found');
+        }
+
+        // check if user is authorized
+    
+
+        const updated = await SEASON.findOneAndUpdate({
+            seriesTitle: seriesTitle,
+            seasonNumber: seasonNumber,
+        },req.body,{new:true});
+
+        //send response
+        if(updated){
+            return res.status(StatusCodes.OK).send(`Season Updated: ${updated}`);
+        } else {
+            return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send('Error Updating Season');
+        }
+    }catch (error){
+        console.log(error);
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send('Error Updated Season');
+    }};
+
 
 const updateEpisode = async(req,res)=>{
-    res.send('Update Episode');
-};
+    try{
+        const {seriesTitle,seasonNumber,episodeNumber} = req.params;
+       
+        if (!seriesTitle || !seasonNumber || !episodeNumber) {
+            return res.status(StatusCodes.FORBIDDEN).send('Series title, season number, and episode number must be defined in the URL parameters');
+        }
+
+        //check if season exists
+        const episode = await EPISODE.findOne({
+            seriesTitle: seriesTitle,
+            seasonNumber: seasonNumber,
+            episodeNumber: episodeNumber
+        });
+
+        if(!episode){
+            return res.status(StatusCodes.NOT_FOUND).send('episode not found');
+        }
+
+        // check if user is authorized
+    
+
+        const updated = await EPISODE.findOneAndUpdate(
+            {
+                seriesTitle: seriesTitle,
+                seasonNumber: seasonNumber,
+                episodeNumber: episodeNumber
+            },
+            req.body,
+            { new: true } // Return the updated document
+        );
+
+
+        //send response
+        if(updated){
+            return res.status(StatusCodes.OK).send(`episode Updated: ${updated}`);
+        } else {
+            return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send('Error Updating episode');
+        }
+    }catch (error){
+        console.log(error);
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send('Error Updated episode');
+    }};
 
 
 // Remove Series Data 

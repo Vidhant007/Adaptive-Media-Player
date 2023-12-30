@@ -14,13 +14,13 @@ SERIES.post('/addSeries',ADDSERIES);
 SERIES.post('/addEpisode',ADDEPISODE);
 SERIES.post('/addSeason',ADDSEASON);
 
-SERIES.delete('/deleteSeries',REMOVESERIES);
-SERIES.delete('/deleteEpisode',REMOVEEPISODE);
-SERIES.delete('/deleteSeason',REMOVESEASON);
+SERIES.delete('/deleteSeries/:id',REMOVESERIES);
+SERIES.delete('/deleteEpisode/:id',REMOVEEPISODE);
+SERIES.delete('/deleteSeason/:id',REMOVESEASON);
 
-SERIES.patch('/updateSeries',UPDATESERIES);
-SERIES.patch('/updateSeason',UPDATESEASON);
-SERIES.patch('/updateEpisode',UPDATEEPISODE);
+SERIES.patch('/updateSeries/:id',UPDATESERIES);
+SERIES.patch('/updateSeason/:seriesTitle/:seasonNumber',UPDATESEASON);
+SERIES.patch('/updateEpisode/:seriesTitle/:seasonNumber/:episodeNumber',UPDATEEPISODE);
 
 module.exports = {
     SERIESROUTER: SERIES

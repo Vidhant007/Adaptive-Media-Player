@@ -10,6 +10,10 @@ const episodeSchema = new mongoose.Schema({
         type: Number,
         required: [true, "Please provide a season number"],
     },
+    episodeNumber:{
+        type: Number,
+        required: [true, "Please provide a episode number"],
+    },
     description: {
         type: String,
         required: [true, "Please provide a description"],
@@ -26,6 +30,7 @@ const episodeSchema = new mongoose.Schema({
     },
     releaseDate:{
         type: Date,
+        default: Date.now,
     }
 });
 
