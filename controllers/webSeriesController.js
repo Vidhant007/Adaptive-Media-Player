@@ -161,7 +161,7 @@ const updateSeries = async(req,res)=>{
             return res.status(StatusCodes.FORBIDDEN).send('Series ID not Defined');
         }
 
-        //check if movie exists
+        //check if series exists
         const series = await SERIES.findById(id);
 
         if(!series){
@@ -185,8 +185,34 @@ const updateSeries = async(req,res)=>{
     }};
 
 const updateSeason = async(req,res)=>{
-    res.send('Update Series');
-};
+    try{
+        const {id} = req.params;
+        if(!id){
+            return res.status(StatusCodes.FORBIDDEN).send('Season ID not Defined');
+        }
+
+        //check if season exists
+        const season = await SEASON.findById(id);
+
+        if(!season){
+            return res.status(StatusCodes.NOT_FOUND).send('Season not found');
+        }
+
+        // check if user is authorized
+    
+
+        const updated = await SEASON.findOneAndUpdate({_id: id},req.body);
+
+        //send response
+        if(updated){
+            return res.status(StatusCodes.OK).send(`Season Updated: ${updated}`);
+        } else {
+            return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send('Error Updating Season');
+        }
+    }catch (error){
+        console.log(error);
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send('Error Updated Season');
+    }};
 
 const updateEpisode = async(req,res)=>{
     res.send('Update Episode');
