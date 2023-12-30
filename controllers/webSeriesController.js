@@ -155,8 +155,34 @@ const getEpisodes = async(req,res)=>{
 
 // Update Series Data
 const updateSeries = async(req,res)=>{
-    res.send('Update Series');
-};
+    try{
+        const {id} = req.params;
+        if(!id){
+            return res.status(StatusCodes.FORBIDDEN).send('Series ID not Defined');
+        }
+
+        //check if movie exists
+        const series = await SERIES.findById(id);
+
+        if(!series){
+            return res.status(StatusCodes.NOT_FOUND).send('Series not found');
+        }
+
+        // check if user is authorized
+    
+
+        const updated = await SERIES.findOneAndUpdate({_id: id},req.body);
+
+        //send response
+        if(updated){
+            return res.status(StatusCodes.OK).send(`Series Updated: ${updated}`);
+        } else {
+            return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send('Error Updating Series');
+        }
+    }catch (error){
+        console.log(error);
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send('Error Updated Series');
+    }};
 
 const updateSeason = async(req,res)=>{
     res.send('Update Series');
