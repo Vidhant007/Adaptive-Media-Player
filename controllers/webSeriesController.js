@@ -215,8 +215,34 @@ const updateSeason = async(req,res)=>{
     }};
 
 const updateEpisode = async(req,res)=>{
-    res.send('Update Episode');
-};
+    try{
+        const {id} = req.params;
+        if(!id){
+            return res.status(StatusCodes.FORBIDDEN).send('Episode ID not Defined');
+        }
+
+        //check if season exists
+        const episode = await EPISODE.findById(id);
+
+        if(!episode){
+            return res.status(StatusCodes.NOT_FOUND).send('episode not found');
+        }
+
+        // check if user is authorized
+    
+
+        const updated = await EPISODE.findOneAndUpdate({_id: id},req.body);
+
+        //send response
+        if(updated){
+            return res.status(StatusCodes.OK).send(`episode Updated: ${updated}`);
+        } else {
+            return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send('Error Updating episode');
+        }
+    }catch (error){
+        console.log(error);
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send('Error Updated episode');
+    }};
 
 
 // Remove Series Data 
