@@ -350,7 +350,7 @@ const removeSeason = async(req,res)=>{
 
         if(deleted){
             //remove associated episodes
-            const deleteEpisodes = await EPISODE.deleteMany({seriesTitle:deleted.title});
+            const deleteEpisodes = await EPISODE.deleteMany({seriesTitle:deleted.seriesTitle});
 
             //send response
             return res.status(StatusCodes.OK).send(`Season Deleted: ${deleted}`);
