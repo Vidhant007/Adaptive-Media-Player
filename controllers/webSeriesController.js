@@ -268,15 +268,145 @@ const updateEpisode = async(req,res)=>{
 
 // Remove Series Data 
 const removeSeries = async(req,res)=>{
-    res.send('Remove Series');
+    try{
+        const {id} = req.params;
+        if(!id){
+            return res.status(StatusCodes.FORBIDDEN).send('Series ID not Defined');
+        }
+
+        //check if movie exists
+        const series = await SERIES.findById(id);
+
+        if(!series){
+            return res.status(StatusCodes.NOT_FOUND).send('Series not found');
+        }
+
+        // First Delete all transcoded series
+        const seriesName = series.title.replace(/\s+/g, '_');
+        const rootDir = path.resolve(__dirname, '..');
+        const transcodedDataDir = path.join(rootDir,'/series',seriesName);
+    
+        // Check if the directory exists before attempting to remove it
+        const directoryExists = await fs_promise.access(transcodedDataDir)
+            .then(() => true)
+            .catch(() => false);
+
+        if (directoryExists) {
+            // Delete transcoded series directory
+            await fs_promise.rm(transcodedDataDir, { recursive: true });
+        }
+
+        // delete data in db
+        const deleted = await SERIES.findOneAndDelete({_id: id});
+
+        if(deleted){
+              //delete associated seasons and episodes
+              const deleteSeasons = await SEASON.deleteMany({seriesTitle:deleted.title})
+              const deleteEpisodes = await EPISODE.deleteMany({seriesTitle:deleted.title});
+          
+              //send response
+            return res.status(StatusCodes.OK).send(`SERIES Deleted: ${deleted}`);
+        } else {
+            return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send('Error Deleting Series');
+        }
+    }catch (error){
+        console.log(error);
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send('Error Deleting Series');
+    }
 };
 
 const removeSeason = async(req,res)=>{
-    res.send('Remove Seasons');
+    try{
+        const {id} = req.params;
+        if(!id){
+            return res.status(StatusCodes.FORBIDDEN).send('Season ID not Defined');
+        }
+
+        //check if movie exists
+        const season = await SEASON.findById(id);
+
+        if(!season){
+            return res.status(StatusCodes.NOT_FOUND).send('Season not found');
+        }
+
+        // First Delete all transcoded movies
+        const seriesName = season.seriesTitle.replace(/\s+/g, '_');
+        const seasonName = "Season" + season.seasonNumber.toString();
+        const rootDir = path.resolve(__dirname, '..');
+        const transcodedDataDir = path.join(rootDir,'/series',seriesName,seasonName);
+
+         // Check if the directory exists before attempting to remove it
+         const directoryExists = await fs_promise.access(transcodedDataDir)
+         .then(() => true)
+         .catch(() => false);
+
+     if (directoryExists) {
+         // Delete transcoded series directory
+         await fs_promise.rm(transcodedDataDir, { recursive: true });
+     }
+
+        // delete data in db
+        const deleted = await SEASON.findOneAndDelete({_id: id});
+
+        if(deleted){
+            //remove associated episodes
+            const deleteEpisodes = await EPISODE.deleteMany({seriesTitle:deleted.title});
+
+            //send response
+            return res.status(StatusCodes.OK).send(`Season Deleted: ${deleted}`);
+        } else {
+            return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send('Error Deleting season');
+        }
+    }catch (error){
+        console.log(error);
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send('Error Deleting season');
+    }
 };
 
 const removeEpisode = async(req,res)=>{
-    res.send('Remove Episode');
+    try{
+        const {id} = req.params;
+        if(!id){
+            return res.status(StatusCodes.FORBIDDEN).send('Episode ID not Defined');
+        }
+
+        //check if movie exists
+        const episode = await EPISODE.findById(id);
+
+        if(!episode){
+            return res.status(StatusCodes.NOT_FOUND).send('Episode not found');
+        }
+
+        // First Delete all transcoded movies
+        const seriesName = episode.seriesTitle.replace(/\s+/g, '_');
+        const seasonName = "Season" + episode.seasonNumber.toString();
+        const episodeName = "Episode" + episode.episodeNumber.toString();
+        const rootDir = path.resolve(__dirname, '..');
+        const transcodedDataDir = path.join(rootDir,'/series',seriesName,seasonName,episodeName);
+
+         // Check if the directory exists before attempting to remove it
+         const directoryExists = await fs_promise.access(transcodedDataDir)
+         .then(() => true)
+         .catch(() => false);
+
+     if (directoryExists) {
+         // Delete transcoded series directory
+         await fs_promise.rm(transcodedDataDir, { recursive: true });
+     }
+
+        // delete data in db
+        const deleted = await EPISODE.findOneAndDelete({_id: id});
+
+        //send response
+        if(deleted){
+            return res.status(StatusCodes.OK).send(`Episode Deleted: ${deleted}`);
+        } else {
+            return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send('Error Deleting episode');
+        }
+    }catch (error){
+        console.log(error);
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send('Error Deleting episode');
+    }
 };
 
 
