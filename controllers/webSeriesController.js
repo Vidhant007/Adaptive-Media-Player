@@ -268,7 +268,38 @@ const updateEpisode = async(req,res)=>{
 
 // Remove Series Data 
 const removeSeries = async(req,res)=>{
-    res.send('Remove Series');
+    try{
+        const {id} = req.params;
+        if(!id){
+            return res.status(StatusCodes.FORBIDDEN).send('Series ID not Defined');
+        }
+
+        //check if movie exists
+        const series = await SERIES.findById(id);
+
+        if(!series){
+            return res.status(StatusCodes.NOT_FOUND).send('Series not found');
+        }
+
+        // First Delete all transcoded series
+        const seriesName = series.title.replace(/\s+/g, '_');
+        const rootDir = path.resolve(__dirname, '..');
+        const transcodedDataDir = path.join(rootDir,'/series',seriesName);
+        await fs_promise.rm(transcodedDataDir,{recursive: true});
+    
+        // delete data in db
+        const deleted = await SERIES.findOneAndDelete({_id: id});
+
+        //send response
+        if(deleted){
+            return res.status(StatusCodes.OK).send(`SERIES Deleted: ${deleted}`);
+        } else {
+            return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send('Error Deleting Series');
+        }
+    }catch (error){
+        console.log(error);
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send('Error Deleting Series');
+    }
 };
 
 const removeSeason = async(req,res)=>{
