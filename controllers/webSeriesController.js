@@ -285,13 +285,26 @@ const removeSeries = async(req,res)=>{
         const seriesName = series.title.replace(/\s+/g, '_');
         const rootDir = path.resolve(__dirname, '..');
         const transcodedDataDir = path.join(rootDir,'/series',seriesName);
-        await fs_promise.rm(transcodedDataDir,{recursive: true});
     
+        // Check if the directory exists before attempting to remove it
+        const directoryExists = await fs_promise.access(transcodedDataDir)
+            .then(() => true)
+            .catch(() => false);
+
+        if (directoryExists) {
+            // Delete transcoded series directory
+            await fs_promise.rm(transcodedDataDir, { recursive: true });
+        }
+
         // delete data in db
         const deleted = await SERIES.findOneAndDelete({_id: id});
 
-        //send response
         if(deleted){
+              //delete associated seasons and episodes
+              const deleteSeasons = await SEASON.deleteMany({seriesTitle:deleted.title})
+              const deleteEpisodes = await EPISODE.deleteMany({seriesTitle:deleted.title});
+          
+              //send response
             return res.status(StatusCodes.OK).send(`SERIES Deleted: ${deleted}`);
         } else {
             return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send('Error Deleting Series');
@@ -326,8 +339,8 @@ const removeSeason = async(req,res)=>{
         // delete data in db
         const deleted = await SEASON.findOneAndDelete({_id: id});
 
-        //send response
         if(deleted){
+            //send response
             return res.status(StatusCodes.OK).send(`Season Deleted: ${deleted}`);
         } else {
             return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send('Error Deleting season');
