@@ -143,8 +143,17 @@ const removeMovie = async(req,res)=>{
         // First Delete all transcoded movies
         const rootDir = path.resolve(__dirname, '..');
         const transcodedDataDir = path.join(rootDir,movie.videoPath);
-        await fs_promise.rm(transcodedDataDir,{recursive: true});
-    
+
+         // Check if the directory exists before attempting to remove it
+         const directoryExists = await fs_promise.access(transcodedDataDir)
+         .then(() => true)
+         .catch(() => false);
+
+     if (directoryExists) {
+         // Delete transcoded series directory
+         await fs_promise.rm(transcodedDataDir, { recursive: true });
+     }
+
         // delete data in db
         const deleted = await MOVIE.findOneAndDelete({_id: id});
 

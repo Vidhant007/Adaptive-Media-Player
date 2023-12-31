@@ -334,12 +334,24 @@ const removeSeason = async(req,res)=>{
         const seasonName = "Season" + season.seasonNumber.toString();
         const rootDir = path.resolve(__dirname, '..');
         const transcodedDataDir = path.join(rootDir,'/series',seriesName,seasonName);
-        await fs_promise.rm(transcodedDataDir,{recursive: true});
-    
+
+         // Check if the directory exists before attempting to remove it
+         const directoryExists = await fs_promise.access(transcodedDataDir)
+         .then(() => true)
+         .catch(() => false);
+
+     if (directoryExists) {
+         // Delete transcoded series directory
+         await fs_promise.rm(transcodedDataDir, { recursive: true });
+     }
+
         // delete data in db
         const deleted = await SEASON.findOneAndDelete({_id: id});
 
         if(deleted){
+            //remove associated episodes
+            const deleteEpisodes = await EPISODE.deleteMany({seriesTitle:deleted.title});
+
             //send response
             return res.status(StatusCodes.OK).send(`Season Deleted: ${deleted}`);
         } else {
@@ -371,8 +383,17 @@ const removeEpisode = async(req,res)=>{
         const episodeName = "Episode" + episode.episodeNumber.toString();
         const rootDir = path.resolve(__dirname, '..');
         const transcodedDataDir = path.join(rootDir,'/series',seriesName,seasonName,episodeName);
-        await fs_promise.rm(transcodedDataDir,{recursive: true});
-    
+
+         // Check if the directory exists before attempting to remove it
+         const directoryExists = await fs_promise.access(transcodedDataDir)
+         .then(() => true)
+         .catch(() => false);
+
+     if (directoryExists) {
+         // Delete transcoded series directory
+         await fs_promise.rm(transcodedDataDir, { recursive: true });
+     }
+
         // delete data in db
         const deleted = await EPISODE.findOneAndDelete({_id: id});
 
