@@ -303,7 +303,39 @@ const removeSeries = async(req,res)=>{
 };
 
 const removeSeason = async(req,res)=>{
-    res.send('Remove Seasons');
+    try{
+        const {id} = req.params;
+        if(!id){
+            return res.status(StatusCodes.FORBIDDEN).send('Season ID not Defined');
+        }
+
+        //check if movie exists
+        const season = await SEASON.findById(id);
+
+        if(!season){
+            return res.status(StatusCodes.NOT_FOUND).send('Season not found');
+        }
+
+        // First Delete all transcoded movies
+        const seriesName = season.seriesTitle.replace(/\s+/g, '_');
+        const seasonName = "Season" + season.seasonNumber.toString();
+        const rootDir = path.resolve(__dirname, '..');
+        const transcodedDataDir = path.join(rootDir,'/series',seriesName,seasonName);
+        await fs_promise.rm(transcodedDataDir,{recursive: true});
+    
+        // delete data in db
+        const deleted = await SEASON.findOneAndDelete({_id: id});
+
+        //send response
+        if(deleted){
+            return res.status(StatusCodes.OK).send(`Season Deleted: ${deleted}`);
+        } else {
+            return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send('Error Deleting season');
+        }
+    }catch (error){
+        console.log(error);
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send('Error Deleting season');
+    }
 };
 
 const removeEpisode = async(req,res)=>{
