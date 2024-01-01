@@ -1,7 +1,7 @@
 # Adaptive-Media-Player
 ### 1. creating a Sever-Side Adaptive videoPlayer
 ### 2. Video Transcoding (AV1-CODEC)
-### 3. Video Streaming Architecure
+### 3. Microservice based video streaming architecture 
 
 
 ### NOTE : to Run transcoder, ffmpeg needs to be installed and configured manually with libsvtav1 encoder wrapper.
@@ -26,3 +26,4 @@ sudo make install
 ```
 ffmpeg -version
 ```
+
