@@ -154,9 +154,12 @@ const getSeries = async(req,res)=>{
 
 const getSeasons = async(req,res)=>{
     try{
-        const {seriesTitle} = req.body;
-        const seasons = await SEASON.find({seriesTitle: seriesTitle});
-        res.status(StatusCodes.OK).json({ seasons: seasons});
+        const { seriesTitle } = req.query;
+        console.log('Received seriesTitle:', seriesTitle);
+        const seasons = await SEASON.find({ seriesTitle: seriesTitle });
+        console.log('Seasons:', seasons);        
+        res.status(StatusCodes.OK).json({ seasons: seasons });
+
     }catch(error){
         console.log(error);
         return res
@@ -324,8 +327,8 @@ const removeSeries = async(req,res)=>{
 
         if(deleted){
               //delete associated seasons and episodes
-              const deleteSeasons = await SEASON.deleteMany({seriesTitle:deleted.title})
-              const deleteEpisodes = await EPISODE.deleteMany({seriesTitle:deleted.title});
+              await SEASON.deleteMany({seriesTitle:deleted.title})
+              await EPISODE.deleteMany({seriesTitle:deleted.title});
           
               //send response
             return res.status(StatusCodes.OK).send(`SERIES Deleted: ${deleted}`);
