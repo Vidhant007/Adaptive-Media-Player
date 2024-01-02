@@ -155,9 +155,7 @@ const getSeries = async(req,res)=>{
 const getSeasons = async(req,res)=>{
     try{
         const { seriesTitle } = req.query;
-        console.log('Received seriesTitle:', seriesTitle);
         const seasons = await SEASON.find({ seriesTitle: seriesTitle });
-        console.log('Seasons:', seasons);        
         res.status(StatusCodes.OK).json({ seasons: seasons });
 
     }catch(error){
@@ -169,7 +167,7 @@ const getSeasons = async(req,res)=>{
 
 const getEpisodes = async(req,res)=>{
     try{
-        const {seriesTitle,seasonNumber} = req.body;
+        const {seriesTitle,seasonNumber} = req.query;
         const episodes = await EPISODE.find({seriesTitle: seriesTitle, seasonNumber: seasonNumber});
         res.status(StatusCodes.OK).json({ episodes: episodes });
     }catch(error){
