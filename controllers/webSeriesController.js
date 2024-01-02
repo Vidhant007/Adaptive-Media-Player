@@ -165,7 +165,15 @@ const getSeasons = async(req,res)=>{
 }
 
 const getEpisodes = async(req,res)=>{
-    res.send('Get Episodes');
+    try{
+        const {seriesTitle,seasonNumber} = req.body;
+        const episodes = await EPISODE.find({seriesTitle: seriesTitle, seasonNumber: seasonNumber});
+        res.status(StatusCodes.OK).json({ episodes: episodes });
+    }catch(error){
+        console.log(error);
+        return res
+          .status(StatusCodes.INTERNAL_SERVER_ERROR)
+          .send("Error Getting EPISODES !");    }
 }
 
 // Update Series Data
