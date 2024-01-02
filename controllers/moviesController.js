@@ -26,8 +26,14 @@ const upload = multer({
 
 //get all movies
 const getMovies = async(req,res)=>{
-    const movies = await MOVIE.find();
-    res.status(StatusCodes.OK).json(movies);
+    try{
+        const movies = await MOVIE.find();
+        res.status(StatusCodes.OK).json(movies);
+    }catch(error){
+        console.log(error);
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json('Error Getting Movies');
+    }
+    
 }
 
 //this controller will run the transcode.sh script after videoUpload is completed

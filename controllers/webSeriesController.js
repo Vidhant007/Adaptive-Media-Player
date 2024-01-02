@@ -142,11 +142,26 @@ const addEpisode = async(req,res)=>{
 
 //getting series data
 const getSeries = async(req,res)=>{
-    res.send("Get Series");
+    try{
+        const series = await SERIES.find();
+        res.status(StatusCodes.OK).json({ series: series});
+    }catch(error){
+        console.log(error);
+        return res
+          .status(StatusCodes.INTERNAL_SERVER_ERROR)
+          .send("Error Getting SERIES !");    }
 }
 
 const getSeasons = async(req,res)=>{
-    res.send("Get Seasons");
+    try{
+        const {seriesTitle} = req.body;
+        const seasons = await SEASON.find({seriesTitle: seriesTitle});
+        res.status(StatusCodes.OK).json({ seasons: seasons});
+    }catch(error){
+        console.log(error);
+        return res
+          .status(StatusCodes.INTERNAL_SERVER_ERROR)
+          .send("Error Getting SEASONS!");    }
 }
 
 const getEpisodes = async(req,res)=>{
