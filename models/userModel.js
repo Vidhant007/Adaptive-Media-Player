@@ -9,9 +9,15 @@ const userSchema = new mongoose.Schema({
   phone: {
     type: Number,
     required: [true, "Please provide a phone number"],
-    minlength: 10,
-    maxlength: 50, // Corrected property name
+    validate: {
+      validator: function (value) {
+        // Use a regular expression to validate the phone number format
+        return /^[0-9]{10}$/.test(value);
+      },
+      message: "Please provide a valid 10-digit phone number",
+    },
   },
+
   email: {
     type: String,
     required: [true, "Please provide an email address"],
@@ -27,7 +33,6 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: [true, "Please provide a password"],
     minlength: 6,
-    maxlength: 50, // Corrected property name
   },
   profiles: {
     type: [{

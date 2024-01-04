@@ -11,24 +11,57 @@ const registerUser = async (req,res)=>{
     try{
         const {username,phone,email,password} = req.body;
 
+        if (!username || !phone || !email || !password) {
+            return res.status(StatusCodes.BAD_REQUEST).json({ error: 'Missing required fields' });
+        }
+
+
         //checking if user is already exists
         const existingUser = await USER.findOne({
             $or: [
-              { username: username },
               { phone: phone },
               { email: email }
             ]
-          });    
-
-
+          });
+      
           if (existingUser) {
-            return res.status(StatusCodes.BAD_REQUEST).json({ error: 'User already exists' });
+            const errorResponse = {};
+      
+            if (existingUser.phone === phone) {
+              errorResponse.phone = 'Phone number is already registered';
+            }
+      
+            if (existingUser.email === email) {
+              errorResponse.email = 'Email is already registered';
+            }
+      
+            return res.status(StatusCodes.BAD_REQUEST).json({ error: errorResponse });
           }
 
-          
+          const salt = await bcrypt.genSalt(10);
+          const hashedPassword = await bcrypt.hash(password, salt);
+        
+          //creating a default profile for user
+          const profile = await PROFILE.create({ profileName: username, profileAcess: 3 });
+          //create default subscription status for  user
+          const subscription = await SUBSCRIPTION.create({startDate: Date.now(),endDate: Date.now(),price:0,isSubscribed:false});
 
+          const tempUser = {
+            username,
+            phone,
+            email,
+            password: hashedPassword,
+            profiles: [profile._id], // Add the default profile to the user's profiles array
+            subscriptionId: subscription._id,
+          };
 
+          const user = await USER.create({...tempUser});
 
+          const token = jwt.sign({userId:user._id,name:user.username},process.env.JWT_SECRET,{
+            expiresIn:process.env.JWT_LIFETIME,
+          })
+
+          res.status(StatusCodes.CREATED).send({user: {name:user.username},token})
 
         }catch(error){
         console.log(error);
