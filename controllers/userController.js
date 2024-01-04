@@ -150,7 +150,39 @@ const editUser = async (req, res) => {
   
 
 const deleteAccount = async(req,res)=>{
-    res.send('Deleted User');
+    try{
+        const {id} = req.params;
+
+        if (!id) {
+            return res.status(StatusCodes.FORBIDDEN).send("User ID not provided");
+          }
+
+        //check if user exists
+        const user = await USER.findById(id);
+
+        if (!user) {
+          return res.status(StatusCodes.NOT_FOUND).send("User not found");
+        }
+          
+        //delete all associated profiles
+        const profileIds = user.profiles;
+        if (profileIds && profileIds.length > 0) {
+            await PROFILE.deleteMany({ _id: { $in: profileIds } });
+          }
+
+        // Delete the user's subscription
+        await SUBSCRIPTION.findByIdAndDelete(user.subscriptionId);
+
+        // Delete the user
+        await USER.findByIdAndDelete(id);
+        return res.status(StatusCodes.OK).send({
+            message: "User, associated profiles, and subscription deleted successfully",
+            deleted: user,
+          });
+    }catch(error){
+        console.log(error);
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).send("Error Deleting User Account");
+    }
 }
 
 module.exports={
