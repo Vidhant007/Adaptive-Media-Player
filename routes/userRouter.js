@@ -6,8 +6,8 @@ const {LOGINUSER,REGISTERUSER,EDITUSER,DELETEACCOUNT} = require('../controllers/
 
 USER.post('/register',REGISTERUSER);
 USER.post('/login',LOGINUSER);
-USER.delete('/delete-account',DELETEACCOUNT);
-USER.patch('/edit-user',EDITUSER);
+USER.delete('/delete-account/:id',DELETEACCOUNT);
+USER.patch('/edit-user/:id',EDITUSER);
 
 module.exports = {
     USERROUTER :USER
