@@ -36,11 +36,4 @@ const movieSchema = new mongoose.Schema({
     },
 });
 
-// Add a pre-save middleware to calculate videoPath
-// movieSchema.pre('save', function (next) {
-//     // Calculate videoPath based on title
-//     this.videoPath = path.join(__dirname, '..', 'Movies', this.title);
-//     next();
-// });
-
 module.exports = mongoose.model('Movie', movieSchema);

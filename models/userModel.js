@@ -29,15 +29,17 @@ const userSchema = new mongoose.Schema({
     minlength: 6,
     maxlength: 50, // Corrected property name
   },
-  profiles:{
-    
+  profiles: {
+    type: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Profile',
+    }],
+    default: [], // default is an empty array
   },
   subscriptionId:{
-
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Subscription',
   },
-  isSubscribed:{
-    
-  }
 });
 
 module.exports = mongoose.model('User', userSchema);

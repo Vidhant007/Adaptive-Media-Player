@@ -1,11 +1,9 @@
 const mongoose = require('mongoose');
 
 const subscriptionSchema = new mongoose.Schema({
-    subscriptionId:{
-        type:String,
-    },
-    userId:{
-        type:String,
+    subscriptionId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Subscription',
     },
     startDate:{
         type:Date,
