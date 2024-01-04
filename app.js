@@ -12,7 +12,7 @@ app.use(express.json());
 app.use(express.static("./public/uploads"));
 
 // ROUTERS
-const {USERROUTER} = require('./routes/userRoute');
+const {USERROUTER} = require('./routes/userRouter');
 const {SUBSCRIPTIONSROUTER} = require('./routes/subscriptionRoute');
 const {PROFILESROUTER} = require('./routes/profileRouter');
 const {MOVIESROUTER} = require('./routes/moviesRouter');

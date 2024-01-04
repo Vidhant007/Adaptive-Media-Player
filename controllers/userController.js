@@ -100,10 +100,54 @@ const loginUser = async(req,res)=>{
     }
 }
 
+const editUser = async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { username, phone, email, password } = req.body;
+  
+      if (!id) {
+        return res.status(StatusCodes.FORBIDDEN).send("User ID not provided");
+      }
+  
+      const user = await USER.findById(id);
+      if (!user) {
+        return res.status(StatusCodes.NOT_FOUND).send("User not found");
+      }
 
-const editUser = async(req,res)=>{
-    res.send('Edit User');
-}
+         // Check if at least one field is present in the request body
+      if (!username && !phone && !email && !password) {
+        return res.status(StatusCodes.BAD_REQUEST).send("At least one field (username, phone, email, password) must be provided for update");
+      }
+  
+      const updateObject = {};
+      if (username !== undefined) {
+        updateObject.username = username;
+      }
+      if (phone !== undefined) {
+        updateObject.phone = phone;
+      }
+      if (email !== undefined) {
+        updateObject.email = email;
+      }
+      if (password !== undefined) {
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
+        updateObject.password = hashedPassword;
+      }
+  
+      const updatedUser = await USER.findOneAndUpdate({ _id: id }, updateObject, { new: true });
+  
+      if (updatedUser) {
+        return res.status(StatusCodes.OK).send(`User Updated: ${updatedUser}`);
+      } else {
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send("Error Updating User");
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).send("Error Editing User Details");
+    }
+  };
+  
 
 const deleteAccount = async(req,res)=>{
     res.send('Deleted User');
