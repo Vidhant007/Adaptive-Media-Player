@@ -70,7 +70,34 @@ const registerUser = async (req,res)=>{
 }
 
 const loginUser = async(req,res)=>{
-    res.send('Login User');
+    try{
+        const {email,password} = req.body;
+
+        if(!email || !password){
+            return res.status(StatusCodes.NOT_FOUND).send('please provide email and password');
+        }
+
+        const user = await USER.findOne({email: email});
+        if(!user){
+            return res.status(StatusCodes.NOT_FOUND).send("User Not Registered!");
+        }
+
+        //checking if password is correct
+        const isPasswordCorrect = await bcrypt.compare(password,user.password);
+        if(!isPasswordCorrect) {
+            return res.status(StatusCodes.BAD_REQUEST).send('Invalid Credentials');
+        }
+
+        const token = jwt.sign({userId:user._id,name:user.username},process.env.JWT_SECRET,{
+            expiresIn:process.env.JWT_LIFETIME,
+          });
+
+          res.status(StatusCodes.OK).json({user:{name:user.username},token});
+
+        }catch (error){
+        console.log(error);
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).send('Error logging In !');
+    }
 }
 
 
