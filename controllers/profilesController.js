@@ -69,8 +69,34 @@ const createUserProfile = async (req, res) => {
   
   
 
-const deleteUserProfile = async(req,res)=>{
-    res.send('Delete Profile');
+const deleteProfile = async(req,res)=>{
+    try{
+        const {id} = req.params;
+
+        if (!id) {
+            return res.status(StatusCodes.FORBIDDEN).send("Profile ID not provided as Params");
+        }
+
+        const profile = await PROFILE.findById(id);
+        if (!profile) {
+            return res.status(StatusCodes.NOT_FOUND).send("Profile not found");
+        }
+
+        //if profile exists delete profile
+        const deletedProfile = await PROFILE.findByIdAndDelete(id);
+
+        if (deletedProfile) {
+            res.status(StatusCodes.OK).json({ message: "Profile deleted successfully" });
+        } else {
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: "Error deleting profile" });
+        }
+
+    }catch (error){
+        console.log(error);
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).send('Error Deleting Profile');
+    }
+
+
 }
 
 const updateUserProfile = async(req,res)=>{
@@ -81,7 +107,7 @@ const updateUserProfile = async(req,res)=>{
 
 module.exports = {
     GETPROFILES:getProfiles,
-    DELETEUSERPROFILE:deleteUserProfile,
+    DELETEPROFILE:deleteProfile,
     UPDATEUSERPROFILE:updateUserProfile,
     CREATEUSERPROFILE:createUserProfile,
 }
