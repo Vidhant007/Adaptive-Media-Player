@@ -42,7 +42,7 @@ const registerUser = async (req,res)=>{
           const hashedPassword = await bcrypt.hash(password, salt);
         
           //creating a default profile for user
-          const profile = await PROFILE.create({ profileName: username, profileAcess: 3 });
+          const profile = await PROFILE.create({ profileName: username, profileAcess: 3,isMasterProfile:true });
           //create default subscription status for  user
           const subscription = await SUBSCRIPTION.create({startDate: Date.now(),endDate: Date.now(),price:0,isSubscribed:false});
 

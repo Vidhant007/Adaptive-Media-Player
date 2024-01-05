@@ -69,20 +69,26 @@ const createUserProfile = async (req, res) => {
   
   
 
-const deleteProfile = async(req,res)=>{
-    try{
-        const {id} = req.params;
+  const deleteProfile = async (req, res) => {
+    try {
+        const { id } = req.params;
 
         if (!id) {
             return res.status(StatusCodes.FORBIDDEN).send("Profile ID not provided as Params");
         }
 
         const profile = await PROFILE.findById(id);
+
         if (!profile) {
             return res.status(StatusCodes.NOT_FOUND).send("Profile not found");
         }
 
-        //if profile exists delete profile
+        // Check if the profile is a master profile
+        if (profile.isMasterProfile) {
+            return res.status(StatusCodes.FORBIDDEN).json({ message: "Master profile cannot be deleted" });
+        }
+
+        // If the profile is not a master profile, delete it
         const deletedProfile = await PROFILE.findByIdAndDelete(id);
 
         if (deletedProfile) {
@@ -91,13 +97,12 @@ const deleteProfile = async(req,res)=>{
             res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: "Error deleting profile" });
         }
 
-    }catch (error){
+    } catch (error) {
         console.log(error);
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).send('Error Deleting Profile');
     }
-
-
 }
+
 
 const updateUserProfile = async(req,res)=>{
     //changing acess rights and privileges of a user
