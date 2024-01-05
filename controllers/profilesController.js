@@ -111,15 +111,47 @@ const createUserProfile = async (req, res) => {
 }
 
 
-const updateUserProfile = async(req,res)=>{
-    //changing acess rights and privileges of a user
-    //what type of content they can see
-    res.send("Update User Profile");
-}
+const updateProfileAcess = async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { profileAcess } = req.body;
+  
+      if (!id) {
+        return res.status(StatusCodes.FORBIDDEN).send("Profile ID not provided as Params");
+      }
+  
+      if (!profileAcess) {
+        return res.status(StatusCodes.FORBIDDEN).send("Provide new ProfileAcess in req.body");
+      }
+  
+      const profile = await PROFILE.findById(id);
+  
+      if (!profile) {
+        return res.status(StatusCodes.NOT_FOUND).send("Profile not found");
+      }
+  
+      // Check if the profile is a master profile
+      if (profile.isMasterProfile) {
+        return res.status(StatusCodes.FORBIDDEN).json({ message: "Master profile cannot be Updated" });
+      }
+  
+      const updated = await PROFILE.findByIdAndUpdate(id, { profileAcess: profileAcess }, { new: true });
+  
+      if (updated) {
+        return res.status(StatusCodes.OK).send(`Profile Privileges Updated: ${updated}`);
+      } else {
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send("Error Updating Profile Privileges");
+      }
+    } catch (error) {
+      console.error(error);
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send('Error Updating Profile');
+    }
+  };
+  
 
 module.exports = {
     GETPROFILES:getProfiles,
     DELETEPROFILE:deleteProfile,
-    UPDATEUSERPROFILE:updateUserProfile,
+    UPDATEPROFILEACESS:updateProfileAcess,
     CREATEUSERPROFILE:createUserProfile,
 }
