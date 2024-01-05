@@ -47,12 +47,19 @@ const createUserProfile = async (req, res) => {
       if (!user) {
         return res.status(StatusCodes.NOT_FOUND).send("User not found");
       }
+
+          // Get user profiles
+    const profiles = await PROFILE.find({ _id: { $in: user.profiles } });
+
+
   
-      // Checking if profile with the same name already exists
-      const existingProfile = await PROFILE.findOne({ profileName: profileName });
-      if (existingProfile) {
-        return res.status(StatusCodes.CONFLICT).send("Profile with the same name already exists");
-      }
+    // Checking if profile with the same name already exists for that user
+    const existingProfile = profiles.find((profile) => profile.profileName === profileName);
+
+    if (existingProfile) {
+      return res.status(StatusCodes.CONFLICT).send("Profile with the same name already exists");
+    }
+  
   
       // Create profile
       const profile = await PROFILE.create({ profileName: profileName, profileAcess: profileAcess });
