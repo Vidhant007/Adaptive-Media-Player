@@ -1,14 +1,13 @@
 const express = require('express');
 const PROFILE = express.Router();
 
-const {GETPROFILES,GETUSERPROFILE,DELETEUSERPROFILE,UPDATEUSERPROFILE,CREATEUSERPROFILE} = require('../controllers/profilesController');
+const {GETPROFILES,DELETEPROFILE,UPDATEPROFILEACESS,CREATEUSERPROFILE} = require('../controllers/profilesController');
 
 
-PROFILE.post('/create-profile',CREATEUSERPROFILE);
-PROFILE.get('/get-profiles',GETPROFILES);
-PROFILE.get('/get-user-profile',GETUSERPROFILE);
-PROFILE.patch('/update-profile',UPDATEUSERPROFILE);
-PROFILE.delete('/delete-profile',DELETEUSERPROFILE);
+PROFILE.post('/create-profile/:id',CREATEUSERPROFILE);
+PROFILE.get('/get-profiles/:id',GETPROFILES);
+PROFILE.patch('/update-profileAcess/:id',UPDATEPROFILEACESS);
+PROFILE.delete('/delete-profile/:id',DELETEPROFILE);
 
 module.exports = {
     PROFILESROUTER : PROFILE,
