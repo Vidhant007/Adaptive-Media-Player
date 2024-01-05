@@ -5,8 +5,7 @@ const {GETPROFILES,GETUSERPROFILE,DELETEUSERPROFILE,UPDATEUSERPROFILE,CREATEUSER
 
 
 PROFILE.post('/create-profile/:id',CREATEUSERPROFILE);
-PROFILE.get('/get-profiles',GETPROFILES);
-PROFILE.get('/get-user-profile',GETUSERPROFILE);
+PROFILE.get('/get-profiles/:id',GETPROFILES);
 PROFILE.patch('/update-profile',UPDATEUSERPROFILE);
 PROFILE.delete('/delete-profile',DELETEUSERPROFILE);
 

@@ -3,11 +3,30 @@ const PROFILE = require('../models/profileModel');
 const USER = require('../models/userModel');
 
 const getProfiles = async(req,res) =>{
-    res.send('Get Profiles');
-}
+    try{
+        const { id } = req.params;
 
-const getUserProfile = async(req,res)=>{
-    res.send('Get user Profile');
+        if (!id) {
+            return res.status(StatusCodes.FORBIDDEN).send("User ID not provided as Params");
+          }
+
+        // checking if user exists
+        const user = await USER.findById(id);
+        if (!user) {
+            return res.status(StatusCodes.NOT_FOUND).send("User not found");
+        }
+
+         // If user exists, get all associated profiles
+        const profiles = await PROFILE.find({ _id: { $in: user.profiles } });
+
+        // Send success response with profiles
+        res.status(StatusCodes.OK).json({ profiles: profiles });
+
+    } catch (error) {
+      console.error(error);
+        res.status(Status.INTERNAL_SERVER_ERROR).send('Error Getting User Profiles');
+    }
+
 }
 
 const createUserProfile = async (req, res) => {
@@ -61,7 +80,6 @@ const updateUserProfile = async(req,res)=>{
 }
 
 module.exports = {
-    GETUSERPROFILE:getUserProfile,
     GETPROFILES:getProfiles,
     DELETEUSERPROFILE:deleteUserProfile,
     UPDATEUSERPROFILE:updateUserProfile,
