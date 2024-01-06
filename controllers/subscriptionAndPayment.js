@@ -34,6 +34,7 @@ const selectPlan = async(req,res)=>{
         //if user and plan exists modify subscription
         const subscription = await SUBSCRIPTION.findByIdAndUpdate(user.subscriptionId,{
             planId: plan._id,
+            planName : plan.planName,
             startDate: Date.now(),
             endDate: endDate,
             price: plan.price,
@@ -67,9 +68,33 @@ const paymentGatewayController = async(req,res)=>{
     res.send("Payment Gateway Controller");
 }
 
-const getCurrentSubscriptionPlan = async(req,res)=>{
-    res.send("Get Current Plan");
-}
+const getCurrentSubscriptionPlan = async (req, res) => {
+    try {
+        const { userId } = req.params;
+
+        if (!userId) {
+            return res.status(StatusCodes.BAD_REQUEST).send("Provide UserID as Params");
+        }
+
+        // check if user exists
+        const user = await USER.findById(userId);
+        if (!user) {
+            return res.status(StatusCodes.NOT_FOUND).send("User does not exist");
+        }
+
+        const subscription = await SUBSCRIPTION.findById(user.subscriptionId);
+
+        if (subscription) {
+            return res.status(StatusCodes.OK).json({ subscription: subscription });
+        } else {
+            return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send("Error Fetching Plan");
+        }
+    } catch (error) {
+        console.error(error);
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send("Error Fetching subscriptionPlan");
+    }
+};
+
 
 
 module.exports = {
