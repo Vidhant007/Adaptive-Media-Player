@@ -62,9 +62,50 @@ const deletePlan = async (req,res) =>{
 
 };
 
-const updatePlan = async (req,res) =>{
-    res.send('Update Plan');
+const updatePlan = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        if (!id) {
+            return res.status(StatusCodes.FORBIDDEN).send("Plan ID not provided as Params");
+        }
+
+        // Checking if the plan exists
+        const plan = await PLAN.findById(id);
+        if (!plan) {
+            return res.status(StatusCodes.NOT_FOUND).send('Plan Not Found');
+        }
+
+        // Extracting fields from req.body that you want to update
+        const { duration, price, description } = req.body;
+        const updateFields = {};
+
+        if (duration !== undefined) {
+            updateFields.duration = duration;
+        }
+
+        if (price !== undefined) {
+            updateFields.price = price;
+        }
+
+        if (description !== undefined) {
+            updateFields.description = description;
+        }
+
+        // Updating the plan with the specified fields
+        const updatedPlan = await PLAN.findByIdAndUpdate(id, updateFields, { new: true });
+
+        if (updatedPlan) {
+            return res.status(StatusCodes.OK).json({ message: "Plan updated successfully", plan: updatedPlan });
+        } else {
+            return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send('Error Updating Plan');
+        }
+    } catch (error) {
+        console.error(error);
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send('Error Updating Plan');
+    }
 };
+
 
 module.exports = {
     CREATEPLAN:createPlan,
