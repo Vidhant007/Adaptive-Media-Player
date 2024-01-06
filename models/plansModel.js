@@ -7,7 +7,7 @@ const planSchema = new mongoose.Schema({
         unique: true,
     },
     duration:{
-        type: String,
+        type: Number, // 1 month, 6 months, 12 months etc
         required: true,
         unique: true,
     },

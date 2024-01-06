@@ -1,5 +1,26 @@
+const { StatusCodes } = require("http-status-codes");
+const PLAN = require("../models/plansModel");
+
 const createPlan = async (req,res) =>{
-    res.send('Create Plan');
+    try{
+        const {planName,duration,price,description} = req.body;
+
+        if(!planName || !duration || !price || !description){
+            return res.status(StatusCodes.BAD_REQUEST).send("Provide PlanName, Duration, Price and Description");
+        }
+
+        const plan = await PLAN.findOne({planName:planName});
+        if(plan){
+            return res.status(StatusCodes.CONFLICT).send('PlanName Already Exists')
+        }
+
+        const newPlan = await PLAN.create({planName:planName,duration:duration,price:price,description:description});
+        res.status(StatusCodes.OK).send(`Plan created successfully ${newPlan}`);
+
+    }catch(error){
+        console.log(error);
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).send('Error Creating New Plan');
+    }
 }
 
 const getPlans = async (req,res) =>{
