@@ -34,7 +34,32 @@ const getPlans = async (req,res) =>{
 };
 
 const deletePlan = async (req,res) =>{
-    res.send('Delete Plan');
+    try{
+        const {id} = req.params;
+
+        if (!id) {
+            return res.status(StatusCodes.FORBIDDEN).send("Plan ID not provided as Params");
+        }
+
+        //checking if plan exists
+        const plan = await PLAN.findById(id);
+        if(!plan){
+            return res.status(StatusCodes.FORBIDDEN).send('Plan Not Found');
+        }
+
+        //delete profile
+        const deleted = await PLAN.findByIdAndDelete(id);
+        if(deleted){
+            return res.status(StatusCodes.OK).json({message:"Plan deleted successfully"});
+        }else{
+            return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send('Error deleting Plan');
+        }
+
+    }catch(error){
+        console.log(error);
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send('Error deleting Plan');
+    }
+
 };
 
 const updatePlan = async (req,res) =>{
