@@ -54,8 +54,52 @@ const selectPlan = async(req,res)=>{
 }
 
 const upgradePlan = async(req,res)=>{
-    //upgrads current plan to new plan and facilitates payment
-    res.send('Upgrade Plan Controller');
+    try{
+        // get userId  to find associated subscription and newPlanId to upgrade plan
+        const { userId, newPlanId } = req.params;
+
+        if (!userId || !newPlanId) {
+            return res.status(StatusCodes.BAD_REQUEST).send("Provide UserID and PlanID as Params");
+        }
+
+        // check if user exists
+        const user = await USER.findById(userId);
+        if(!user){
+            return  res.status(StatusCodes.NOT_FOUND).send("User does not exist");
+        }
+
+        // Check if the plan exists
+        const plan = await PLAN.findById(newPlanId);
+        if (!plan) {
+            return res.status(StatusCodes.NOT_FOUND).send("Plan does not exist");
+        }
+
+        //add payment gateway
+
+        //calculate the new enddate based on plan's duration
+        const endDate = new Date();
+        endDate.setMonth(endDate.getMonth() + plan.duration);
+
+        //if user and plan exists modify subscription
+        const subscription = await SUBSCRIPTION.findByIdAndUpdate(user.subscriptionId,{
+            planId: plan._id,
+            planName : plan.planName,
+            startDate: Date.now(),
+            endDate: endDate,
+            price: plan.price,
+            isSubscribed: true,
+        },{new:true});
+
+        if(subscription){
+            res.status(StatusCodes.CREATED).json({ message: "Plan upgraded successfully", subscription: subscription });
+        }else{
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).send("Error upgrading Plan");
+        }
+
+    }catch(error){
+        console.log(error);
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).send("Error Selecting Plan");
+    }
 }
 
 const unsubscribePlan = async (req,res)=>{
