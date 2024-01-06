@@ -102,10 +102,53 @@ const upgradePlan = async(req,res)=>{
     }
 }
 
-const unsubscribePlan = async (req,res)=>{
-    //unsubscribe plan (makes it void)
-    res.send('Unsubscribe Plan');
-}
+const unsubscribePlan = async (req, res) => {
+    try {
+        // get userId to find associated subscription
+        const { userId } = req.params;
+
+        if (!userId) {
+            return res.status(StatusCodes.BAD_REQUEST).send("Provide UserID as Params");
+        }
+
+        // check if user exists
+        const user = await USER.findById(userId);
+        if (!user) {
+            return res.status(StatusCodes.NOT_FOUND).send("User does not exist");
+        }
+
+        // fetch associated subscription
+        const subscription = await SUBSCRIPTION.findById(user.subscriptionId);
+
+        if (!subscription) {
+            return res.status(StatusCodes.NOT_FOUND).send("Subscription not found");
+        }
+
+        // update subscription to mark it as unsubscribed
+        const updatedSubscription = await SUBSCRIPTION.findByIdAndUpdate(
+            user.subscriptionId,
+            {
+                isSubscribed: false,
+                startDate: null,
+                endDate: null,
+                price: null,
+                planId: null,
+                planName: "Free Tier",
+            },
+            { new: true }
+        );
+
+        if (updatedSubscription) {
+            return res.status(StatusCodes.OK).json({ message: "Plan unsubscribed successfully", subscription: updatedSubscription });
+        } else {
+            return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send("Error Unsubscribing Plan");
+        }
+    } catch (error) {
+        console.error(error);
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send("Error Unsubscribing Plan");
+    }
+};
+
 
 //can be called inside other functions ?? still experimental
 const paymentGatewayController = async(req,res)=>{
