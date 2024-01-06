@@ -5,6 +5,13 @@ const subscriptionSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Subscription',
     },
+    planId:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref: 'Plan',
+    },
+    planName:{
+        type:String,
+    },
     startDate:{
         type:Date,
     },
