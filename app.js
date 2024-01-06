@@ -17,6 +17,9 @@ const {SUBSCRIPTIONSROUTER} = require('./routes/subscriptionRoute');
 const {PROFILESROUTER} = require('./routes/profileRouter');
 const {MOVIESROUTER} = require('./routes/moviesRouter');
 const { SERIESROUTER } = require('./routes/seriesRouter');
+const {PLANSROUTER} = require('./routes/plansRouter');
+
+// VIDEOPLAYER
 const { PLAYER } = require('./player/playerRouter');
 
 
@@ -33,8 +36,10 @@ app.use('/player',PLAYER);
 app.use('/api/v1/auth',USERROUTER);
 app.use('/api/v1/profile',PROFILESROUTER);
 app.use('/api/v1/subscription',SUBSCRIPTIONSROUTER);
+app.use('/api/v1/plans',PLANSROUTER);
 app.use('/api/v1/movies',MOVIESROUTER);
-app.use('/api/v1/series',SERIESROUTER)
+app.use('/api/v1/series',SERIESROUTER);
+
 
 
 const PORT = process.env.PORT ;

@@ -5,8 +5,8 @@ const {CREATEPLAN,DELETEPLAN,UPDATEPLAN,GETPLANS} = require('../controllers/plan
 
 PLAN.post('/createplan',CREATEPLAN);
 PLAN.get('/getplans',GETPLANS);
-PLAN.patch('/updateplan',UPDATEPLAN);
-PLAN.delete('/deleteplan',DELETEPLAN);
+PLAN.patch('/updateplan/:id',UPDATEPLAN);
+PLAN.delete('/deleteplan/:id',DELETEPLAN);
 
 module.exports = {
     PLANSROUTER : PLAN,
