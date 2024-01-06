@@ -1,12 +1,15 @@
 const selectPlan = async(req,res)=>{
+    // selects plan from  existing plan by getting plan id and facilitating payment
     res.send('Select Plan');
 }
 
 const upgradePlan = async(req,res)=>{
+    //upgrads current plan to new plan and facilitates payment
     res.send('Upgrade Plan Controller');
 }
 
 const unsubscribePlan = async (req,res)=>{
+    //unsubscribe plan (makes it void)
     res.send('Unsubscribe Plan');
 }
 
