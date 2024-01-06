@@ -24,7 +24,13 @@ const createPlan = async (req,res) =>{
 }
 
 const getPlans = async (req,res) =>{
-    res.send('Get Plans');
+    try{
+        const plans = await PLAN.find();
+        res.status(StatusCodes.OK).json(plans);
+    }catch(error){
+        console.log(error);
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).send('Error Getting Plans');
+    }
 };
 
 const deletePlan = async (req,res) =>{

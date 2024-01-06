@@ -9,7 +9,6 @@ const planSchema = new mongoose.Schema({
     duration:{
         type: Number, // 1 month, 6 months, 12 months etc
         required: true,
-        unique: true,
     },
     price:{
         type: Number,
