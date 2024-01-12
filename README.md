@@ -27,5 +27,4 @@ sudo make install
 ffmpeg -version
 ```
 
-Package still in development
 
